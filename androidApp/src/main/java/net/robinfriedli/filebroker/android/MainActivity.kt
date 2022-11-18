@@ -1,14 +1,12 @@
 package net.robinfriedli.filebroker.android
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -16,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import net.robinfriedli.filebroker.Greeting
+import androidx.drawerlayout.widget.DrawerLayout
 
 @Composable
 fun MyApplicationTheme(
@@ -57,18 +55,22 @@ fun MyApplicationTheme(
     )
 }
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MyApplicationTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting(Greeting().greeting())
-                }
-            }
+        setContentView(R.layout.main_layout)
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "filebroker"
+
+        val actionBar = supportActionBar
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+            val drawerToggle = ActionBarDrawerToggle(this, drawer, toolbar, 0, 0)
+            drawerToggle.isDrawerIndicatorEnabled = true
+            drawer.addDrawerListener(drawerToggle)
+            drawerToggle.syncState()
         }
     }
 }
