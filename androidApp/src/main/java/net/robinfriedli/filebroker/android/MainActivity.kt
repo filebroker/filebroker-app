@@ -1,6 +1,10 @@
 package net.robinfriedli.filebroker.android
 
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.ListView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -64,14 +68,53 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = "filebroker"
 
         val actionBar = supportActionBar
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true)
-            val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
             val drawerToggle = ActionBarDrawerToggle(this, drawer, toolbar, 0, 0)
             drawerToggle.isDrawerIndicatorEnabled = true
             drawer.addDrawerListener(drawerToggle)
             drawerToggle.syncState()
         }
+
+        val drawerList = findViewById<ListView>(R.id.left_drawer)
+        val navigationDrawerItemTitles =
+            resources.getStringArray(R.array.navigation_drawer_items_array)
+        drawerList.onItemClickListener =
+            DrawerItemClickListener(drawer, drawerList, navigationDrawerItemTitles)
+
+        val navigationDrawerItems = arrayOf(DrawerItem(R.drawable.ic_baseline_home_24, "Home"))
+
+        val navigationDrawerItemAdapter =
+            DrawerItemAdapter(this, R.layout.list_view_item_row, navigationDrawerItems)
+        drawerList.adapter = navigationDrawerItemAdapter
+
+        supportFragmentManager.beginTransaction().replace(R.id.content_frame, HomeFragment())
+            .commit()
+    }
+
+    inner class DrawerItemClickListener(
+        private val drawer: DrawerLayout,
+        private val drawerList: ListView,
+        private val navigationDrawerItemTitles: Array<String>
+    ) : OnItemClickListener {
+        override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+            val fragment = when (p2) {
+                0 -> HomeFragment()
+                else -> null
+            }
+
+            if (fragment != null) {
+                supportFragmentManager.beginTransaction().replace(R.id.content_frame, fragment)
+                    .commit()
+
+                drawerList.setItemChecked(p2, true)
+                drawerList.setSelection(p2)
+                title = navigationDrawerItemTitles[p2]
+                drawer.closeDrawer(drawerList)
+            }
+        }
+
     }
 }
 
