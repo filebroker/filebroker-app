@@ -2,5 +2,10 @@
 <resources>
     <string-array name="navigation_drawer_items_array">
         <item>Home</item>
+        <item>Login</item>
     </string-array>
+    <string name="login">Login</string>
+    <string name="ok">OK</string>
+    <string name="user_name">User Name</string>
+    <string name="password">Password</string>
 </resources>

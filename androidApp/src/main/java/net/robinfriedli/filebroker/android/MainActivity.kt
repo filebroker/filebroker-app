@@ -1,7 +1,9 @@
 package net.robinfriedli.filebroker.android
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ListView
@@ -19,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import net.robinfriedli.filebroker.Api
 
 @Composable
 fun MyApplicationTheme(
@@ -60,6 +64,11 @@ fun MyApplicationTheme(
 }
 
 class MainActivity : AppCompatActivity() {
+
+    val api: Api = Api()
+
+    var drawerList: ListView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_layout)
@@ -77,17 +86,13 @@ class MainActivity : AppCompatActivity() {
             drawerToggle.syncState()
         }
 
-        val drawerList = findViewById<ListView>(R.id.left_drawer)
+        drawerList = findViewById(R.id.left_drawer)
         val navigationDrawerItemTitles =
             resources.getStringArray(R.array.navigation_drawer_items_array)
-        drawerList.onItemClickListener =
-            DrawerItemClickListener(drawer, drawerList, navigationDrawerItemTitles)
+        drawerList!!.onItemClickListener =
+            DrawerItemClickListener(drawer, drawerList!!, navigationDrawerItemTitles)
 
-        val navigationDrawerItems = arrayOf(DrawerItem(R.drawable.ic_baseline_home_24, "Home"))
-
-        val navigationDrawerItemAdapter =
-            DrawerItemAdapter(this, R.layout.list_view_item_row, navigationDrawerItems)
-        drawerList.adapter = navigationDrawerItemAdapter
+        setupDrawerItems()
 
         supportFragmentManager.beginTransaction().replace(R.id.content_frame, HomeFragment())
             .commit()
@@ -101,6 +106,14 @@ class MainActivity : AppCompatActivity() {
         override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
             val fragment = when (p2) {
                 0 -> HomeFragment()
+                1 -> {
+                    val currentLogin = api.currentLogin
+                    if (currentLogin != null) {
+                        ProfileFragment(api)
+                    } else {
+                        LoginFragment(api)
+                    }
+                }
                 else -> null
             }
 
@@ -116,6 +129,40 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    fun setupDrawerItems() {
+        val currentLogin = api.currentLogin
+        val profileDrawerItem = if (currentLogin != null) {
+            DrawerItem(R.drawable.ic_baseline_person_24, currentLogin.user.user_name)
+        } else {
+            DrawerItem(R.drawable.ic_baseline_login_24, "Login")
+        }
+
+        val navigationDrawerItems = arrayOf(
+            DrawerItem(R.drawable.ic_baseline_home_24, "Home"),
+            profileDrawerItem
+        )
+
+        val navigationDrawerItemAdapter =
+            DrawerItemAdapter(this, R.layout.list_view_item_row, navigationDrawerItems)
+        drawerList!!.adapter = navigationDrawerItemAdapter
+    }
+
+    fun onLoginCompleted(redirectFragment: Fragment? = null) {
+        if (redirectFragment != null) {
+            supportFragmentManager.beginTransaction().replace(R.id.content_frame, redirectFragment)
+                .commit()
+        }
+
+        if (drawerList != null) {
+            setupDrawerItems()
+        }
+    }
+}
+
+fun View.hideKeyboard() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(windowToken, 0)
 }
 
 @Composable
