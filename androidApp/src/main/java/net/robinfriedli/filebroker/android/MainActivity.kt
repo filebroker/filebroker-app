@@ -106,7 +106,8 @@ class MainActivity : AppCompatActivity() {
         override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
             val fragment = when (p2) {
                 0 -> HomeFragment()
-                1 -> {
+                1 -> PostsFragment(api)
+                2 -> {
                     val currentLogin = api.currentLogin
                     if (currentLogin != null) {
                         ProfileFragment(api)
@@ -140,6 +141,7 @@ class MainActivity : AppCompatActivity() {
 
         val navigationDrawerItems = arrayOf(
             DrawerItem(R.drawable.ic_baseline_home_24, "Home"),
+            DrawerItem(R.drawable.ic_baseline_image_search_24, "Posts"),
             profileDrawerItem
         )
 

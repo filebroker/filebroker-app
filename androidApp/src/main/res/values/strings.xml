@@ -2,10 +2,15 @@
 <resources>
     <string-array name="navigation_drawer_items_array">
         <item>Home</item>
+        <item>Posts</item>
         <item>Login</item>
     </string-array>
     <string name="login">Login</string>
     <string name="ok">OK</string>
     <string name="user_name">User Name</string>
     <string name="password">Password</string>
+    <string name="search">Search</string>
+    <string name="query">Query</string>
+    <string name="results">%1$s Results</string>
+    <string name="page">Page %1$s / %2$s</string>
 </resources>

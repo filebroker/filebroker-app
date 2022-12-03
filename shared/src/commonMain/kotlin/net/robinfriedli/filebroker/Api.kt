@@ -1,5 +1,6 @@
 package net.robinfriedli.filebroker
 
+import io.github.aakira.napier.Napier
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -7,6 +8,8 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
@@ -26,6 +29,8 @@ class Api {
     }
 
     var currentLogin: Login? = null
+
+    val loginRefreshLock = Mutex()
 
     @Serializable
     class Login(val token: String, val refreshToken: String, val expiry: Instant, val user: User)
@@ -49,6 +54,26 @@ class Api {
         val user: User
     )
 
+    @Serializable
+    class PostQueryObject(
+        val pk: Int,
+        val data_url: String?,
+        val source_url: String?,
+        val title: String?,
+        val creation_timestamp: String,
+        val fk_create_user: Int,
+        val score: Int,
+        val s3_object: String?,
+        val thumbnail_url: String?,
+        val thumbnail_object_key: String?,
+        val is_public: Boolean,
+        val public_edit: Boolean,
+        val description: String?
+    )
+
+    @Serializable
+    class SearchResult(val full_count: Long?, val pages: Long?, val posts: List<PostQueryObject>)
+
     suspend fun login(request: LoginRequest): LoginResponse {
         val response = http.post(BASE_URL + "login") {
             contentType(ContentType.Application.Json)
@@ -57,19 +82,78 @@ class Api {
 
         if (response.status.isSuccess()) {
             val loginResponse = response.body<LoginResponse>()
-            val expirationSecs = loginResponse.expiration_secs / 3 * 2
-            val now = Clock.System.now()
-            currentLogin =
-                Login(
-                    loginResponse.token,
-                    loginResponse.refresh_token,
-                    now.plus(expirationSecs.seconds),
-                    loginResponse.user
-                )
+            handleLoginResponse(loginResponse)
 
             return loginResponse
         } else if (response.status.value == 401) {
             throw InvalidCredentialsException(response.bodyAsText())
+        } else {
+            throw InvalidHttpResponseException(response.status.value, response.bodyAsText())
+        }
+    }
+
+    fun handleLoginResponse(loginResponse: LoginResponse): Login {
+        val expirationSecs = loginResponse.expiration_secs / 3 * 2
+        val now = Clock.System.now()
+        val login = Login(
+            loginResponse.token,
+            loginResponse.refresh_token,
+            now.plus(expirationSecs.seconds),
+            loginResponse.user
+        )
+        currentLogin =
+            login
+        return login
+    }
+
+    suspend fun getCurrentLogin(): Login? {
+        val currentLogin = this.currentLogin
+        return if (currentLogin != null && currentLogin.expiry < Clock.System.now()) {
+            loginRefreshLock.withLock {
+                // recheck after acquiring lock
+                val currentLogin = this.currentLogin
+                if (currentLogin != null && currentLogin.expiry < Clock.System.now()) {
+                    val response =
+                        http.post(BASE_URL + "refresh-token/" + currentLogin.refreshToken)
+
+                    if (response.status.isSuccess()) {
+                        try {
+                            handleLoginResponse(response.body())
+                        } catch (e: Exception) {
+                            Napier.e("Failed to refresh login with exception", e)
+                            currentLogin
+                        }
+                    } else if (response.status.value == 401) {
+                        Napier.w("Failed to refresh login with status 401")
+                        this.currentLogin = null
+                        null
+                    } else {
+                        Napier.e("Failed to refresh login with status ${response.status.value}")
+                        currentLogin
+                    }
+                } else {
+                    currentLogin
+                }
+            }
+        } else {
+            currentLogin
+        }
+    }
+
+    suspend fun search(query: String?, page: Long = 0): SearchResult {
+        val currentLogin = getCurrentLogin()
+        val response = http.get(BASE_URL + "search") {
+            if (query != null) {
+                parameter("query", query)
+            }
+            parameter("page", page)
+            if (currentLogin != null) {
+                header("Authorization", "Bearer " + currentLogin.token)
+            }
+        }
+
+        if (response.status.isSuccess()) {
+            return response.body()
         } else {
             throw InvalidHttpResponseException(response.status.value, response.bodyAsText())
         }
