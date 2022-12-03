@@ -1,8 +1,10 @@
 package net.robinfriedli.filebroker.android
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,7 +48,30 @@ class PostsFragment(val api: Api, var query: String? = null, var currentPage: Lo
                 progressSpinner.visibility = View.VISIBLE
             }
             try {
-                val searchResult = api.search(query, currentPage)
+                val searchResult = try {
+                    api.search(query, currentPage)
+                } catch (e: Exception) {
+                    val message = if (e is Api.InvalidHttpResponseException) {
+                        val responseException = e as Api.InvalidHttpResponseException
+                        if (responseException.status == 400) {
+                            "Invalid Query"
+                        } else {
+                            Log.e(javaClass.simpleName, "Exception in search request", e)
+                            "Search failed"
+                        }
+                    } else {
+                        Log.e(javaClass.simpleName, "Exception in search request", e)
+                        "Search failed"
+                    }
+                    requireActivity().runOnUiThread {
+                        val alertBuilder = AlertDialog.Builder(context)
+                        alertBuilder.setTitle("Error")
+                        alertBuilder.setMessage(message)
+                        alertBuilder.setPositiveButton(R.string.ok) { dialogInterface, _ -> dialogInterface.dismiss() }
+                        alertBuilder.show()
+                    }
+                    return@launch
+                }
                 requireActivity().runOnUiThread {
                     imageGrid.adapter = ImageAdapterGridView(view.context, searchResult.posts)
 
