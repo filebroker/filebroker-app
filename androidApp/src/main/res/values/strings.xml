@@ -13,4 +13,10 @@
     <string name="query">Query</string>
     <string name="results">%1$s Results</string>
     <string name="page">Page %1$s / %2$s</string>
+    <string name="unable_to_display_data">Unable to display data</string>
+    <string name="prev">Previous</string>
+    <string name="next">Next</string>
+    <string name="first">First</string>
+    <string name="last">Last</string>
+    <string name="tags">Tags</string>
 </resources>

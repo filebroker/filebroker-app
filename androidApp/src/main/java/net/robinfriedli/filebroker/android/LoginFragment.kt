@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import kotlinx.coroutines.runBlocking
 import net.robinfriedli.filebroker.Api
 
-class LoginFragment(val api: Api) : Fragment() {
+class LoginFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,14 +39,14 @@ class LoginFragment(val api: Api) : Fragment() {
                 userInput.hideKeyboard()
                 passwordInput.hideKeyboard()
                 runBlocking {
-                    api.login(
+                    (activity as MainActivity).api.login(
                         Api.LoginRequest(
                             userInput.text.toString(),
                             passwordInput.text.toString()
                         )
                     )
 
-                    (activity as MainActivity).onLoginCompleted(HomeFragment())
+                    (activity as MainActivity).onLoginCompleted(R.id.homeFragment)
                 }
             } catch (e: Api.InvalidCredentialsException) {
                 passwordInput.setError("Invalid credentials")

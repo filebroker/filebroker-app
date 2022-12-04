@@ -21,7 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.NavHostFragment
 import net.robinfriedli.filebroker.Api
 
 @Composable
@@ -65,6 +66,8 @@ fun MyApplicationTheme(
 
 class MainActivity : AppCompatActivity() {
 
+    val navHostFragment = NavHostFragment.create(R.navigation.nav_graph)
+
     val api: Api = Api()
 
     var drawerList: ListView? = null
@@ -94,7 +97,9 @@ class MainActivity : AppCompatActivity() {
 
         setupDrawerItems()
 
-        supportFragmentManager.beginTransaction().replace(R.id.content_frame, HomeFragment())
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.content_frame, navHostFragment)
+            .setPrimaryNavigationFragment(navHostFragment) // equivalent to app:defaultNavHost="true"
             .commit()
     }
 
@@ -104,23 +109,22 @@ class MainActivity : AppCompatActivity() {
         private val navigationDrawerItemTitles: Array<String>
     ) : OnItemClickListener {
         override fun onItemClick(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-            val fragment = when (p2) {
-                0 -> HomeFragment()
-                1 -> PostsFragment(api)
+            val fragmentId = when (p2) {
+                0 -> R.id.homeFragment
+                1 -> R.id.postsFragment
                 2 -> {
                     val currentLogin = api.currentLogin
                     if (currentLogin != null) {
-                        ProfileFragment(api)
+                        R.id.profileFragment
                     } else {
-                        LoginFragment(api)
+                        R.id.loginFragment
                     }
                 }
                 else -> null
             }
 
-            if (fragment != null) {
-                supportFragmentManager.beginTransaction().replace(R.id.content_frame, fragment)
-                    .commit()
+            if (fragmentId != null) {
+                navHostFragment.navController.navigate(fragmentId)
 
                 drawerList.setItemChecked(p2, true)
                 drawerList.setSelection(p2)
@@ -150,10 +154,13 @@ class MainActivity : AppCompatActivity() {
         drawerList!!.adapter = navigationDrawerItemAdapter
     }
 
-    fun onLoginCompleted(redirectFragment: Fragment? = null) {
-        if (redirectFragment != null) {
-            supportFragmentManager.beginTransaction().replace(R.id.content_frame, redirectFragment)
-                .commit()
+    fun onLoginCompleted(redirectFragmentId: Int? = null) {
+        if (redirectFragmentId != null) {
+            navHostFragment.navController.navigate(
+                redirectFragmentId,
+                null,
+                NavOptions.Builder().setPopUpTo(redirectFragmentId, false, false).build()
+            )
         }
 
         if (drawerList != null) {

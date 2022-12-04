@@ -15,7 +15,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.robinfriedli.filebroker.Api
 
-class PostsFragment(val api: Api, var query: String? = null, var currentPage: Long = 0) :
+class PostsFragment(var query: String? = null, var currentPage: Long = 0) :
     Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +49,7 @@ class PostsFragment(val api: Api, var query: String? = null, var currentPage: Lo
             }
             try {
                 val searchResult = try {
-                    api.search(query, currentPage)
+                    (activity as MainActivity).api.search(query, currentPage)
                 } catch (e: Exception) {
                     val message = if (e is Api.InvalidHttpResponseException) {
                         val responseException = e as Api.InvalidHttpResponseException
@@ -98,7 +98,7 @@ class PostsFragment(val api: Api, var query: String? = null, var currentPage: Lo
                             context,
                             -2,
                             0,
-                            "First",
+                            resources.getString(R.string.first),
                             !firstPage
                         )
                     )
@@ -108,7 +108,7 @@ class PostsFragment(val api: Api, var query: String? = null, var currentPage: Lo
                             context,
                             -1,
                             currentPage - 1,
-                            "Previous",
+                            resources.getString(R.string.prev),
                             !firstPage
                         )
                     )
@@ -121,7 +121,7 @@ class PostsFragment(val api: Api, var query: String? = null, var currentPage: Lo
                                 context,
                                 -3,
                                 currentPage + 1,
-                                "Next",
+                                resources.getString(R.string.next),
                                 !lastPage
                             )
                         )
@@ -131,7 +131,7 @@ class PostsFragment(val api: Api, var query: String? = null, var currentPage: Lo
                                 context,
                                 -4,
                                 pageCount - 1,
-                                "Last",
+                                resources.getString(R.string.last),
                                 !lastPage
                             )
                         )
@@ -142,7 +142,7 @@ class PostsFragment(val api: Api, var query: String? = null, var currentPage: Lo
                                 context,
                                 -3,
                                 currentPage + 1,
-                                "Next",
+                                resources.getString(R.string.next),
                                 true
                             )
                         )
@@ -183,7 +183,7 @@ class PostsFragment(val api: Api, var query: String? = null, var currentPage: Lo
         return button
     }
 
-    class ImageAdapterGridView(val context: Context, val posts: List<Api.PostQueryObject>) :
+    inner class ImageAdapterGridView(val context: Context, val posts: List<Api.PostQueryObject>) :
         BaseAdapter() {
         override fun getCount(): Int {
             return posts.size
@@ -205,6 +205,16 @@ class PostsFragment(val api: Api, var query: String? = null, var currentPage: Lo
                 imageView.layoutParams = ViewGroup.LayoutParams(320, 180)
                 imageView.scaleType = ImageView.ScaleType.CENTER_CROP
                 imageView.setPadding(16, 16, 16, 16)
+                imageView.setOnClickListener {
+                    val bundle = Bundle()
+                    bundle.putInt("key", post.pk)
+                    bundle.putString("query", query)
+                    bundle.putLong("currentPage", currentPage)
+                    (activity as MainActivity).navHostFragment.navController.navigate(
+                        R.id.postDetailFragment,
+                        bundle
+                    )
+                }
                 imageView
             } else {
                 convertView as ImageView
