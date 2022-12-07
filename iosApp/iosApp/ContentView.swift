@@ -2,60 +2,43 @@ import SwiftUI
 import shared
 
 struct ContentView: View {
-    let greet = Greeting().greeting()
-    @State var showMenu = false
+    
+    @State var query = ""
+    
+    @ObservedObject var env: Env
     
     var body: some View {
-        let drag = DragGesture().onEnded {
-            if $0.translation.width < -100 {
-                withAnimation {
-                    self.showMenu = false
-                }
-            }
-        }
-        
-        return NavigationView {
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    MainView(showMenu: self.$showMenu)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .offset(x: self.showMenu ? geometry.size.width / 2 : 0)
-                        .disabled(self.showMenu ? true : false)
-                    if self.showMenu {
-                        MenuView()
-                            .frame(width: geometry.size.width / 2)
-                            .transition(.move(edge: .leading))
+        NavigationStack {
+            VStack {
+                List {
+                    if env.currentLogin == nil {
+                        NavigationLink(destination: LoginView(env: env)) {
+                            HStack {
+                                Image(systemName: "person")
+                                    .foregroundColor(.gray)
+                                    .imageScale(.large)
+                                Text("Login")
+                                    .foregroundColor(.gray)
+                                    .font(.headline)
+                            }
+                        }
+                    } else {
+                        NavigationLink(destination: ProfileView(env: env)) {
+                            HStack {
+                                Image(systemName: "person")
+                                    .foregroundColor(.gray)
+                                    .imageScale(.large)
+                                Text(env.currentLogin?.user.user_name ?? "Profile")
+                                    .foregroundColor(.gray)
+                                    .font(.headline)
+                            }
+                        }
                     }
-                }.gesture(drag)
-            }
-            .navigationBarTitle("filebroker", displayMode: .inline)
-            .navigationBarItems(leading: (
-                Button(action: {
-                    withAnimation {
-                        self.showMenu.toggle()
-                    }
-                }) {
-                    Image(systemName: "line.horizontal.3")
-                        .imageScale(.large)
                 }
-            ))
+                .listStyle(.insetGrouped)
+            }
+            .searchable(text: $query, prompt: "Search Posts")
+            .navigationBarTitle("filebroker", displayMode: .large)
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-
-struct MainView: View {
-    
-    @Binding var showMenu: Bool
-    
-    let greet = Greeting().greeting()
-    
-    var body: some View {
-        Text(greet)
     }
 }
