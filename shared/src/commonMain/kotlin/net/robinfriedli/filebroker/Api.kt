@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmStatic
 import kotlin.time.Duration.Companion.seconds
 
-class Api {
+class Api(var loginChangeCallback: ((Login?) -> Unit)? = null) {
     companion object {
         @JvmStatic
         val BASE_URL: String = "https://filebroker.io/api/"
@@ -29,6 +29,10 @@ class Api {
     }
 
     var currentLogin: Login? = null
+        set(value) {
+            loginChangeCallback?.invoke(value)
+            field = value
+        }
 
     val loginRefreshLock = Mutex()
 
@@ -133,6 +137,7 @@ class Api {
         val creation_timestamp: String
     )
 
+    @Throws(Exception::class)
     suspend fun login(request: LoginRequest): LoginResponse {
         val response = http.post(BASE_URL + "login") {
             contentType(ContentType.Application.Json)
@@ -199,6 +204,7 @@ class Api {
         }
     }
 
+    @Throws(Exception::class)
     suspend fun search(query: String? = null, page: Long = 0): SearchResult {
         val currentLogin = getCurrentLogin()
         val response = http.get(BASE_URL + "search") {
@@ -218,6 +224,7 @@ class Api {
         }
     }
 
+    @Throws(Exception::class)
     suspend fun getPost(key: Int, query: String? = null, page: Long = 0): PostDetailed {
         val currentLogin = getCurrentLogin()
         val response = http.get(BASE_URL + "get-post/" + key) {
