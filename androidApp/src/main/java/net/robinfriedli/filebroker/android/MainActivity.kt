@@ -142,6 +142,7 @@ class MainActivity : AppCompatActivity() {
                         R.id.loginFragment
                     }
                 }
+                3 -> R.id.aboutFragment
                 else -> null
             }
 
@@ -168,7 +169,8 @@ class MainActivity : AppCompatActivity() {
         val navigationDrawerItems = arrayOf(
             DrawerItem(R.drawable.ic_baseline_home_24, "Home"),
             DrawerItem(R.drawable.ic_baseline_image_search_24, "Posts"),
-            profileDrawerItem
+            profileDrawerItem,
+            DrawerItem(R.drawable.ic_baseline_info_24, "About")
         )
 
         val navigationDrawerItemAdapter =

@@ -4,6 +4,7 @@
         <item>Home</item>
         <item>Posts</item>
         <item>Login</item>
+        <item>About</item>
     </string-array>
     <string name="login">Login</string>
     <string name="ok">OK</string>
@@ -22,4 +23,6 @@
     <string name="filebroker">filebroker</string>
     <string name="welcome">Welcome, you are signed in as %1$s</string>
     <string name="logout">Logout</string>
+    <string name="filebroker_description">Filebroker %1$s</string>
+    <string name="filebroker_platform">Platform: %1$s</string>
 </resources>

@@ -24,4 +24,8 @@
         android:id="@+id/postDetailFragment"
         android:name="net.robinfriedli.filebroker.android.PostDetailFragment"
         android:label="PostDetailFragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="net.robinfriedli.filebroker.android.AboutFragment"
+        android:label="AboutFragment" />
 </navigation>
