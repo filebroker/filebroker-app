@@ -44,7 +44,9 @@ struct PostsView: View {
                     LazyVGrid(columns: gridColumns) {
                         ForEach(posts) { post in
                             GeometryReader { geometry in
-                                GridItemView(post: post, width: geometry.size.width)
+                                NavigationLink(destination: PostDetailView(env: env, postKey: post.pk, query: query, currentPage: currentPage)) {
+                                    GridItemView(post: post, width: geometry.size.width)
+                                }
                             }
                             .cornerRadius(8.0)
                             .aspectRatio(320 / 180, contentMode: .fit)
@@ -56,7 +58,6 @@ struct PostsView: View {
                     DispatchQueue.main.async {
                         query = currentQuery
                     }
-                    print("Search canceled, current query: " + currentQuery)
                 }
             }
         }
@@ -68,6 +69,7 @@ struct PostsView: View {
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always))
         .disableAutocorrection(true)
         .autocapitalization(.none)
+        .alert("Error", isPresented: $isError, actions: {}, message: {Text(self.errorCode ?? "")})
         .onSubmit(of: .search) {
             currentQuery = query
             executeSearch()
@@ -117,25 +119,27 @@ struct PostsView: View {
     
     func executeSearch() {
         env.api.search(query: query, page: currentPage) { response, error in
-            if let searchResult = response {
-                posts = searchResult.posts
-                fullCount = searchResult.full_count?.int64Value
-                pageCount = searchResult.pages?.int64Value
-            }
-            if let error = error {
-                self.isError = true
-                let kotlinError = (error as NSError).kotlinException
-                if kotlinError is Api.InvalidHttpResponseException {
-                    let status = (kotlinError as! Api.InvalidHttpResponseException).status
-                    if status == 400 {
-                        errorCode = "Invalid Query"
+            DispatchQueue.main.async {
+                if let searchResult = response {
+                    posts = searchResult.posts
+                    fullCount = searchResult.full_count?.int64Value
+                    pageCount = searchResult.pages?.int64Value
+                }
+                if let error = error {
+                    self.isError = true
+                    let kotlinError = (error as NSError).kotlinException
+                    if kotlinError is Api.InvalidHttpResponseException {
+                        let status = (kotlinError as! Api.InvalidHttpResponseException).status
+                        if status == 400 {
+                            errorCode = "Invalid Query"
+                        } else {
+                            Logger().error("Search Failed with status \(status): \(error.localizedDescription)")
+                            errorCode = "Search Failed"
+                        }
                     } else {
-                        Logger().error("Search Failed with status \(status): \(error.localizedDescription)")
+                        Logger().error("Search Failed with unkown error: \(error.localizedDescription)")
                         errorCode = "Search Failed"
                     }
-                } else {
-                    Logger().error("Search Failed with unkown error: \(error.localizedDescription)")
-                    errorCode = "Search Failed"
                 }
             }
         }
