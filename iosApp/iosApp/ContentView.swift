@@ -51,6 +51,17 @@ struct ContentView: View {
                             }
                         }
                     }
+                    NavigationLink(destination: AboutView()) {
+                        HStack {
+                            Image(systemName: "info.circle")
+                                .foregroundColor(.gray)
+                                .imageScale(.large)
+                                .frame(width: 25)
+                            Text("About")
+                                .foregroundColor(.gray)
+                                .font(.headline)
+                        }
+                    }
                 }
                 .listStyle(.insetGrouped)
             }
