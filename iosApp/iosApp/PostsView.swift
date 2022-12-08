@@ -28,32 +28,20 @@ struct PostsView: View {
     
     var body: some View {
         SearchView { isSearching in
-            VStack {
-                HStack {
-                    if fullCount != nil {
-                        Text("\(fullCount!) Results")
-                    }
-                    if fullCount != nil && pageCount != nil {
-                        Spacer()
-                    }
-                    if pageCount != nil {
-                        Text("\(currentPage + 1) / \(pageCount!)")
-                    }
-                }
-                ScrollView {
-                    LazyVGrid(columns: gridColumns) {
-                        ForEach(posts) { post in
-                            GeometryReader { geometry in
-                                NavigationLink(destination: PostDetailView(env: env, postKey: post.pk, query: query, currentPage: currentPage)) {
-                                    GridItemView(post: post, width: geometry.size.width)
-                                }
+            ScrollView {
+                LazyVGrid(columns: gridColumns) {
+                    ForEach(posts) { post in
+                        GeometryReader { geometry in
+                            NavigationLink(destination: PostDetailView(env: env, postKey: post.pk, query: query, currentPage: currentPage)) {
+                                GridItemView(post: post, width: geometry.size.width)
                             }
-                            .cornerRadius(8.0)
-                            .aspectRatio(320 / 180, contentMode: .fit)
                         }
+                        .cornerRadius(8.0)
+                        .aspectRatio(320 / 180, contentMode: .fit)
                     }
                 }
-            }.onChange(of: isSearching) { newVal in
+            }
+            .onChange(of: isSearching) { newVal in
                 if !newVal {
                     DispatchQueue.main.async {
                         query = currentQuery
@@ -74,47 +62,60 @@ struct PostsView: View {
             currentQuery = query
             executeSearch()
         }
-        .navigationBarItems(trailing: HStack {
-            let firstPage = currentPage < 1
-            if !firstPage {
+        .toolbar {
+            ToolbarItemGroup(placement: .bottomBar) {
+                if fullCount != nil {
+                    Text("\(fullCount!) Results")
+                }
+                
+                Spacer()
+                
+                let firstPage = currentPage < 1
                 Button {
                     currentPage = 0
                     executeSearch()
                 } label: {
                     Image(systemName: "chevron.backward.to.line")
                 }
+                .disabled(firstPage)
                 Button {
                     currentPage -= 1
                     executeSearch()
                 } label: {
                     Image(systemName: "chevron.backward")
                 }
-            }
-            if pageCount != nil {
-                let lastPage = currentPage >= pageCount! - 1
-                if !lastPage {
+                .disabled(firstPage)
+                
+                if pageCount != nil {
+                    Text("\(currentPage + 1) / \(pageCount!)")
+                }
+                
+                if pageCount != nil {
+                    let lastPage = currentPage >= pageCount! - 1
                     Button {
                         currentPage += 1
                         executeSearch()
                     } label: {
                         Image(systemName: "chevron.forward")
                     }
+                    .disabled(lastPage)
                     Button {
                         currentPage = pageCount! - 1
                         executeSearch()
                     } label: {
                         Image(systemName: "chevron.forward.to.line")
                     }
-                }
-            } else {
-                Button {
-                    currentPage += 1
-                    executeSearch()
-                } label: {
-                    Image(systemName: "chevron.forward")
+                    .disabled(lastPage)
+                } else {
+                    Button {
+                        currentPage += 1
+                        executeSearch()
+                    } label: {
+                        Image(systemName: "chevron.forward")
+                    }
                 }
             }
-        })
+        }
     }
     
     func executeSearch() {
