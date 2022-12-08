@@ -23,6 +23,9 @@ import androidx.compose.ui.unit.sp
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
+import androidx.preference.PreferenceManager
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.robinfriedli.filebroker.Api
 
 @Composable
@@ -78,6 +81,23 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = "filebroker"
+
+        // refresh stored login
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        api.loginChangeCallback = { login ->
+            if (login != null) {
+                sharedPreferences.edit().putString("refresh_token", login.refreshToken).commit()
+            }
+        }
+        val refreshToken = sharedPreferences.getString("refresh_token", null)
+        if (refreshToken != null) {
+            GlobalScope.launch {
+                api.refreshLogin(refreshToken)
+                runOnUiThread {
+                    setupDrawerItems()
+                }
+            }
+        }
 
         val actionBar = supportActionBar
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
