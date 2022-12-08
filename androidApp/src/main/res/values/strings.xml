@@ -20,4 +20,6 @@
     <string name="last">Last</string>
     <string name="tags">Tags</string>
     <string name="filebroker">filebroker</string>
+    <string name="welcome">Welcome, you are signed in as %1$s</string>
+    <string name="logout">Logout</string>
 </resources>

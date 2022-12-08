@@ -86,7 +86,9 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         api.loginChangeCallback = { login ->
             if (login != null) {
-                sharedPreferences.edit().putString("refresh_token", login.refreshToken).commit()
+                sharedPreferences.edit().putString("refresh_token", login.refreshToken).apply()
+            } else {
+                sharedPreferences.edit().remove("refresh_token").apply()
             }
         }
         val refreshToken = sharedPreferences.getString("refresh_token", null)
