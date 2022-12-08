@@ -35,7 +35,7 @@ class PostsFragment(var query: String? = null, var currentPage: Long = 0) :
             executeSearch(view)
         }
 
-        val queryArg = requireArguments().getString("query")
+        val queryArg = arguments?.getString("query")
         if (!queryArg.isNullOrEmpty() && query.isNullOrEmpty()) {
             query = queryArg
             queryInput.setText(queryArg)
