@@ -14,7 +14,7 @@ struct ProfileView: View {
     @ObservedObject var env: Env
     
     var body: some View {
-        if let login = env.currentLogin {
+        if let login = env.api.currentLogin {
             VStack {
                 Text("Welcome, you are logged in as")
                 Text(login.user.user_name)

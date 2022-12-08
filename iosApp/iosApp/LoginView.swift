@@ -6,6 +6,7 @@
 //  Copyright © 2022 orgName. All rights reserved.
 //
 
+import os
 import SwiftUI
 import shared
 
@@ -41,8 +42,10 @@ struct LoginView: View {
                                 self.errorCode = "Invalid Credentials"
                             } else if kotlinError is Api.InvalidHttpResponseException {
                                 let status = (kotlinError as! Api.InvalidHttpResponseException).status
+                                Logger().error("Login failed with status \(status): \(error.localizedDescription)")
                                 self.errorCode = "Request failed with status " + status.formatted()
                             } else {
+                                Logger().error("Login failed with unexpected error: \(error.localizedDescription)")
                                 self.errorCode = error.localizedDescription
                             }
                         } else {
