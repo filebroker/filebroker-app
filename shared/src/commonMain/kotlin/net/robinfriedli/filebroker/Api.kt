@@ -204,6 +204,25 @@ class Api(var loginChangeCallback: ((Login?) -> Unit)? = null) {
         }
     }
 
+    suspend fun refreshLogin(refreshToken: String): Login? {
+        return loginRefreshLock.withLock {
+            val response =
+                http.post(BASE_URL + "refresh-token/" + refreshToken)
+
+            if (response.status.isSuccess()) {
+                try {
+                    handleLoginResponse(response.body())
+                } catch (e: Exception) {
+                    Napier.e("Failed to refresh login with exception", e)
+                    null
+                }
+            } else {
+                Napier.e("Failed to refresh login with status ${response.status.value}")
+                null
+            }
+        }
+    }
+
     @Throws(Exception::class)
     suspend fun search(query: String? = null, page: Long = 0): SearchResult {
         val currentLogin = getCurrentLogin()
