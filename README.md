@@ -20,19 +20,19 @@ Set up your environment following [Jetbrain's documentation](https://kotlinlang.
 ## Home
 The home view provides a search bar to search for posts. On iOS the home view also includes the navigation items for the next views. On Android those navigation items are found within the drawer menu.
 
-![iOS home](screenshots/home_ios.png | width=100) ![Android home](screenshots/home_android.png | width=100) ![Android drawer](screenshots/drawer_android.png | width=100)
+![iOS home](screenshots/home_ios.png) ![Android home](screenshots/home_android.png) ![Android drawer](screenshots/drawer_android.png)
 
 ## Login and Profile
 After a successful login, the label of the navigation item for the login view is changed to the name of the user and the navigation links to the profile view instead.
 
-![iOS login](screenshots/login_ios.png | width=100) ![iOS profile](screenshots/profile_ios.png | width=100) ![Android login](screenshots/login_android.png | width=100) ![Android profile](screenshots/profile_android.png | width=100)
+![iOS login](screenshots/login_ios.png) ![iOS profile](screenshots/profile_ios.png) ![Android login](screenshots/login_android.png) ![Android profile](screenshots/profile_android.png)
 
 ## Post search
 Upon entering a search term (using the filebroker query language) or using the corresponding navigation link the user is navigated to the post search page, which provides a search bar, scrollable grid view of thumbnails from the resulting posts that navigate to the post view when clicked, as well as pagination buttons.
 
-![iOS post search](screenshots/posts_ios.png | width=100) ![Android post search](screenshots/posts_android.png | width=100)
+![iOS post search](screenshots/posts_ios.png) ![Android post search](screenshots/posts_android.png)
 
 ## Post
 The post view displays the image or video player for the selected post, additional metadata about the post (title, description and tags) and navigation items to the previous and next post in the current selection.
 
-![iOS image post](screenshots/image_post_ios.png | width=100) ![Android image post](screenshots/image_post_android.png | width=100) ![iOS video post](screenshots/video_post_ios.png | width=100) ![Android video post](screenshots/video_post_android.png | width=100)
+![iOS image post](screenshots/image_post_ios.png) ![Android image post](screenshots/image_post_android.png) ![iOS video post](screenshots/video_post_ios.png) ![Android video post](screenshots/video_post_android.png)
