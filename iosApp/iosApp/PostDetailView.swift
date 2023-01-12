@@ -29,14 +29,17 @@ struct PostDetailView: View {
             if postDetailed != nil {
                 HStack {
                     if postDetailed!.s3_object != nil && postDetailed!.s3_object!.mime_type.starts(with: "image") {
-                        AsyncImage(url: URL(string: Api.companion.BASE_URL + "get-object/" + postDetailed!.s3_object!.object_key)) { image in
-                            image
-                                .resizable()
-                                .scaledToFit()
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        .frame(alignment: .center)
+                        let objectUrl = Api.companion.BASE_URL + "get-object/" + postDetailed!.s3_object!.object_key
+                            AsyncImage(url: URL(string: objectUrl)) { image in
+                                ShareLink(item: image, preview: SharePreview("Photo", image: image)) {
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                }
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(alignment: .center)
                     } else if postDetailed!.s3_object != nil && postDetailed!.s3_object!.mime_type.starts(with: "video") {
                         VideoPlayer(player: AVPlayer(url: URL(string: Api.companion.BASE_URL + "get-object/" + postDetailed!.s3_object!.object_key)!))
                             .frame(alignment: .center)
