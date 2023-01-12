@@ -13,6 +13,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import kotlin.jvm.JvmStatic
 import kotlin.time.Duration.Companion.seconds
 
@@ -24,7 +25,7 @@ class Api(var loginChangeCallback: ((Login?) -> Unit)? = null) {
 
     private val http = HttpClient {
         install(ContentNegotiation) {
-            json()
+            json(Json { ignoreUnknownKeys = true })
         }
     }
 
@@ -108,7 +109,8 @@ class Api(var loginChangeCallback: ((Login?) -> Unit)? = null) {
         val fk_broker: Int,
         val fk_uploader: Int,
         val thumbnail_object_key: String?,
-        val creation_timestamp: String
+        val creation_timestamp: String,
+        val filename: String?
     )
 
     @Serializable
