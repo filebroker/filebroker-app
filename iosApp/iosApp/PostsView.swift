@@ -60,6 +60,7 @@ struct PostsView: View {
         .alert("Error", isPresented: $isError, actions: {}, message: {Text(self.errorCode ?? "")})
         .onSubmit(of: .search) {
             currentQuery = query
+            currentPage = 0
             executeSearch()
         }
         .toolbar {

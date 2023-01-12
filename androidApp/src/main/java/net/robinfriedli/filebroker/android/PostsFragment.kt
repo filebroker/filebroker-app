@@ -32,6 +32,7 @@ class PostsFragment(var query: String? = null, var currentPage: Long = 0) :
                 null
             }
             queryInput.hideKeyboard()
+            currentPage = 0
             executeSearch(view)
         }
 
