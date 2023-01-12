@@ -9,6 +9,7 @@
 import SwiftUI
 import os
 import shared
+import Kingfisher
 
 struct PostsView: View {
     
@@ -158,14 +159,15 @@ struct GridItemView: View {
         let thumbnailUrl = getThumbUrl(post: post)
         ZStack(alignment: .topTrailing) {
             if (thumbnailUrl != nil) {
-                AsyncImage(url: thumbnailUrl) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                } placeholder: {
-                    ProgressView()
-                }
-                .frame(width: width, height: width * 0.5625)
+                KFImage
+                    .url(thumbnailUrl)
+                    .fade(duration: 0.25)
+                    .placeholder() {
+                        ProgressView()
+                    }
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: width, height: width * 0.5625)
             } else {
                 Image("logo512")
                     .resizable()
