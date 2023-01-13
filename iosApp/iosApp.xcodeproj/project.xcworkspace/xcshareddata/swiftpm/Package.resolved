@@ -8,6 +8,15 @@
         "revision" : "90135885ef506506620c4911cefb55a95ca2a9a2",
         "version" : "7.5.0"
       }
+    },
+    {
+      "identity" : "vlcui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/VLCUI.git",
+      "state" : {
+        "revision" : "79fc6f3e78bd65af5fdcff4eaf11631cb8914048",
+        "version" : "0.5.1"
+      }
     }
   ],
   "version" : 2

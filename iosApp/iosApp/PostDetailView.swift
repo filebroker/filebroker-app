@@ -10,6 +10,7 @@ import AVKit
 import os
 import shared
 import SwiftUI
+import VLCUI
 
 struct PostDetailView: View {
     
@@ -24,25 +25,38 @@ struct PostDetailView: View {
     @State var isError = false
     @State var errorCode: String? = nil
     
+    @StateObject
+    private var videoContentViewModel = ContentViewModel()
+    
     var body: some View {
         VStack {
             if postDetailed != nil {
                 HStack {
                     if postDetailed!.s3_object != nil && postDetailed!.s3_object!.mime_type.starts(with: "image") {
                         let objectUrl = Api.companion.BASE_URL + "get-object/" + postDetailed!.s3_object!.object_key
-                            AsyncImage(url: URL(string: objectUrl)) { image in
-                                ShareLink(item: image, preview: SharePreview("Photo", image: image)) {
-                                    image
-                                        .resizable()
-                                        .scaledToFit()
-                                }
-                            } placeholder: {
-                                ProgressView()
+                        AsyncImage(url: URL(string: objectUrl)) { image in
+                            ShareLink(item: image, preview: SharePreview("Photo", image: image)) {
+                                image
+                                    .resizable()
+                                    .scaledToFit()
                             }
-                            .frame(alignment: .center)
+                        } placeholder: {
+                            ProgressView()
+                        }
+                        .frame(alignment: .center)
                     } else if postDetailed!.s3_object != nil && postDetailed!.s3_object!.mime_type.starts(with: "video") {
-                        VideoPlayer(player: AVPlayer(url: URL(string: Api.companion.BASE_URL + "get-object/" + postDetailed!.s3_object!.object_key)!))
-                            .frame(alignment: .center)
+                        let objectUrl = URL(string: Api.companion.BASE_URL + "get-object/" + postDetailed!.s3_object!.object_key)!
+                        ZStack(alignment: .bottom) {
+                            VLCVideoPlayer(configuration: getVlcConfiguration(url: objectUrl))
+                                .proxy(videoContentViewModel.proxy)
+                                .onStateUpdated(videoContentViewModel.onStateUpdated)
+                                .onTicksUpdated(videoContentViewModel.onTicksUpdated)
+                                .onDisappear {
+                                    videoContentViewModel.proxy.stop()
+                                }
+                            
+                            OverlayView(viewModel: videoContentViewModel).padding()
+                        }
                     } else {
                         Text("Cannot display post data")
                     }
@@ -124,5 +138,11 @@ struct PostDetailView: View {
                 }
             }
         }
+    }
+    
+    func getVlcConfiguration(url: URL) -> VLCVideoPlayer.Configuration {
+        let vlcConfiguration = VLCVideoPlayer.Configuration(url: url)
+        vlcConfiguration.autoPlay = true
+        return vlcConfiguration
     }
 }

@@ -16,6 +16,12 @@
 		425B38912940C33900B2D0A1 /* PostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425B38902940C33900B2D0A1 /* PostsView.swift */; };
 		425B38932942585000B2D0A1 /* PostDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425B38922942585000B2D0A1 /* PostDetailView.swift */; };
 		425B38952942A81200B2D0A1 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425B38942942A81200B2D0A1 /* AboutView.swift */; };
+		425FC79A2971B8E10039BBA0 /* VLCUI in Frameworks */ = {isa = PBXBuildFile; productRef = 425FC7992971B8E10039BBA0 /* VLCUI */; };
+		425FC79D2971B9C70039BBA0 /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FC79C2971B9C70039BBA0 /* OverlayView.swift */; };
+		425FC79F2971B9FC0039BBA0 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FC79E2971B9FC0039BBA0 /* ContentViewModel.swift */; };
+		425FC7A12971BA280039BBA0 /* IntExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 425FC7A02971BA280039BBA0 /* IntExtension.swift */; };
+		425FC7A32971C61C0039BBA0 /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 425FC7A22971C61C0039BBA0 /* MobileVLCKit.xcframework */; };
+		425FC7A42971C61C0039BBA0 /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 425FC7A22971C61C0039BBA0 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		426273F22970B68600DEB0CE /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 426273F12970B68600DEB0CE /* Kingfisher */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 /* End PBXBuildFile section */
@@ -27,6 +33,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				425FC7A42971C61C0039BBA0 /* MobileVLCKit.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -43,6 +50,10 @@
 		425B38902940C33900B2D0A1 /* PostsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsView.swift; sourceTree = "<group>"; };
 		425B38922942585000B2D0A1 /* PostDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDetailView.swift; sourceTree = "<group>"; };
 		425B38942942A81200B2D0A1 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		425FC79C2971B9C70039BBA0 /* OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
+		425FC79E2971B9FC0039BBA0 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
+		425FC7A02971BA280039BBA0 /* IntExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
+		425FC7A22971C61C0039BBA0 /* MobileVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobileVLCKit.xcframework; path = Carthage/Build/MobileVLCKit.xcframework; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* filebroker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = filebroker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -53,6 +64,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				425FC79A2971B8E10039BBA0 /* VLCUI in Frameworks */,
+				425FC7A32971C61C0039BBA0 /* MobileVLCKit.xcframework in Frameworks */,
 				426273F22970B68600DEB0CE /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -66,6 +79,16 @@
 				058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		425FC79B2971B9A60039BBA0 /* VideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				425FC79C2971B9C70039BBA0 /* OverlayView.swift */,
+				425FC79E2971B9FC0039BBA0 /* ContentViewModel.swift */,
+				425FC7A02971BA280039BBA0 /* IntExtension.swift */,
+			);
+			path = VideoPlayer;
 			sourceTree = "<group>";
 		};
 		7555FF72242A565900829871 = {
@@ -88,6 +111,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				425FC79B2971B9A60039BBA0 /* VideoPlayer */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
 				425B38902940C33900B2D0A1 /* PostsView.swift */,
@@ -106,6 +130,7 @@
 		7555FFB0242A642200829871 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				425FC7A22971C61C0039BBA0 /* MobileVLCKit.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -130,6 +155,7 @@
 			name = iosApp;
 			packageProductDependencies = (
 				426273F12970B68600DEB0CE /* Kingfisher */,
+				425FC7992971B8E10039BBA0 /* VLCUI */,
 			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* filebroker.app */;
@@ -161,6 +187,7 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				426273F02970B68600DEB0CE /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				425FC7982971B8E10039BBA0 /* XCRemoteSwiftPackageReference "VLCUI" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -213,9 +240,12 @@
 				425B388B2931291C00B2D0A1 /* MenuView.swift in Sources */,
 				425B38912940C33900B2D0A1 /* PostsView.swift in Sources */,
 				425B388D293F460C00B2D0A1 /* LoginView.swift in Sources */,
+				425FC7A12971BA280039BBA0 /* IntExtension.swift in Sources */,
 				425B38932942585000B2D0A1 /* PostDetailView.swift in Sources */,
+				425FC79F2971B9FC0039BBA0 /* ContentViewModel.swift in Sources */,
 				425B388F2940AB3B00B2D0A1 /* ProfileView.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
+				425FC79D2971B9C70039BBA0 /* OverlayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,7 +376,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
 				DEVELOPMENT_TEAM = 5GWH9T3NQK;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = iosApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = filebroker;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -420,6 +453,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		425FC7982971B8E10039BBA0 /* XCRemoteSwiftPackageReference "VLCUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/VLCUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.1;
+			};
+		};
 		426273F02970B68600DEB0CE /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -431,6 +472,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		425FC7992971B8E10039BBA0 /* VLCUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 425FC7982971B8E10039BBA0 /* XCRemoteSwiftPackageReference "VLCUI" */;
+			productName = VLCUI;
+		};
 		426273F12970B68600DEB0CE /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 426273F02970B68600DEB0CE /* XCRemoteSwiftPackageReference "Kingfisher" */;
