@@ -20,11 +20,14 @@ struct OverlayView: View {
     @State
     var currentPosition: Float = 0
     
+    var onInteractCb: ((Bool) -> Void)?
+    
     var body: some View {
         VStack {
             Spacer()
             HStack(alignment: .center, spacing: 60) {
                 Button {
+                    onInteractCb?.self(true)
                     viewModel.proxy.jumpBackward(15)
                 } label: {
                     Image(systemName: "gobackward.15")
@@ -33,6 +36,7 @@ struct OverlayView: View {
                 }
                 
                 Button {
+                    onInteractCb?.self(true)
                     if viewModel.playerState == .playing {
                         viewModel.proxy.pause()
                     } else {
@@ -54,6 +58,7 @@ struct OverlayView: View {
                 }
                 
                 Button {
+                    onInteractCb?.self(true)
                     viewModel.proxy.jumpForward(15)
                 } label: {
                     Image(systemName: "goforward.15")
@@ -70,6 +75,7 @@ struct OverlayView: View {
                     value: $currentPosition,
                     in: 0 ... Float(1.0)
                 ) { isEditing in
+                    onInteractCb?.self(!isEditing)
                     isScrubbing = isEditing
                 }
                 

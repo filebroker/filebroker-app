@@ -27,6 +27,8 @@ struct PostDetailView: View {
     
     @StateObject
     private var videoContentViewModel = ContentViewModel()
+    @State var hideOverlay = false
+    @State var overlayHideTimer: Timer? = nil
     
     var body: some View {
         VStack {
@@ -55,7 +57,40 @@ struct PostDetailView: View {
                                     videoContentViewModel.proxy.stop()
                                 }
                             
-                            OverlayView(viewModel: videoContentViewModel).padding()
+                            let overlay = OverlayView(viewModel: videoContentViewModel) { hideAfter in
+                                overlayHideTimer?.invalidate()
+                                if hideAfter {
+                                    overlayHideTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
+                                        self.hideOverlay = true
+                                    }
+                                }
+                            }
+                                .padding()
+                                .onAppear {
+                                    overlayHideTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
+                                        self.hideOverlay = true
+                                    }
+                                }
+                            
+                            if hideOverlay {
+                                overlay.hidden()
+                                // show buffering overlay even if the rest of the overlay is hidden
+                                if videoContentViewModel.playerState == .buffering {
+                                    VStack {
+                                        Spacer()
+                                        ProgressView()
+                                        Spacer()
+                                    }
+                                }
+                            } else {
+                                overlay
+                            }
+                        }
+                        .onTapGesture {
+                            overlayHideTimer?.invalidate()
+                            withAnimation {
+                                hideOverlay.toggle()
+                            }
                         }
                     } else {
                         Text("Cannot display post data")
