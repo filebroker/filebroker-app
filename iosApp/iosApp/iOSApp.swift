@@ -1,9 +1,12 @@
 import os
+import AVFAudio
 import SwiftUI
 import shared
 
 @main
 struct iOSApp: App {
+    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     @StateObject var env = Env()
     
@@ -21,6 +24,18 @@ struct iOSApp: App {
                     }
                 }
         }
+    }
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+          try audioSession.setCategory(.playback, mode: .moviePlayback)
+        } catch {
+          print("Failed to set audioSession category to playback")
+        }
+        return true
     }
 }
 

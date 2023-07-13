@@ -20,16 +20,6 @@ struct NativeVideoPlayer: View {
         AZVideoPlayer(player: player,
                       willBeginFullScreenPresentationWithAnimationCoordinator: willBeginFullScreen,
                       willEndFullScreenPresentationWithAnimationCoordinator: willEndFullScreen)
-        .onDisappear {
-            // onDisappear is called when full screen presentation begins, but the view is
-            // not actually disappearing in this case so we don't want to reset the player
-            guard !willBeginFullScreenPresentation else {
-                willBeginFullScreenPresentation = false
-                return
-            }
-            player?.pause()
-            player?.seek(to: .zero)
-        }
     }
     
     func willBeginFullScreen(_ playerViewController: AVPlayerViewController,
@@ -70,6 +60,8 @@ public struct AZVideoPlayer: UIViewControllerRepresentable {
         controller.player = player
         controller.showsPlaybackControls = showsPlaybackControls
         controller.delegate = context.coordinator
+        controller.allowsPictureInPicturePlayback = true
+        controller.canStartPictureInPictureAutomaticallyFromInline = true
         return controller
     }
     
