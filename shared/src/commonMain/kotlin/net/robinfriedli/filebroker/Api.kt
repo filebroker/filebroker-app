@@ -110,7 +110,9 @@ class Api(var loginChangeCallback: ((Login?) -> Unit)? = null) {
         val fk_uploader: Int,
         val thumbnail_object_key: String?,
         val creation_timestamp: String,
-        val filename: String?
+        val filename: String?,
+        val hls_master_playlist: String?,
+        val hls_disabled: Boolean
     )
 
     @Serializable

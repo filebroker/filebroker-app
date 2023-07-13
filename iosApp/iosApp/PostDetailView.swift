@@ -22,13 +22,17 @@ struct PostDetailView: View {
     
     @State var postDetailed: Api.PostDetailed? = nil
     
+    @State var showSettingsPopOver = false
     @State var isError = false
     @State var errorCode: String? = nil
     
-    @StateObject
-    private var videoContentViewModel = ContentViewModel()
-    @State var hideOverlay = false
-    @State var overlayHideTimer: Timer? = nil
+    @State var videoPlayer: AVPlayer? = nil
+    @State var vlcPlayerConfiguration: VLCVideoPlayer.Configuration? = nil
+    
+    @State var isVideo = false
+    @State var hlsAvailable = false
+    @State var hlsEnabled = false
+    @State var nativePlayerEnabled = false
     
     var body: some View {
         VStack {
@@ -46,57 +50,16 @@ struct PostDetailView: View {
                             ProgressView()
                         }
                         .frame(alignment: .center)
-                    } else if postDetailed!.s3_object != nil && postDetailed!.s3_object!.mime_type.starts(with: "video") {
-                        let objectUrl = URL(string: Api.companion.BASE_URL + "get-object/" + postDetailed!.s3_object!.object_key)!
-                        ZStack(alignment: .bottom) {
-                            VLCVideoPlayer(configuration: getVlcConfiguration(url: objectUrl))
-                                .proxy(videoContentViewModel.proxy)
-                                .onStateUpdated(videoContentViewModel.onStateUpdated)
-                                .onTicksUpdated(videoContentViewModel.onTicksUpdated)
-                                .onDisappear {
-                                    videoContentViewModel.proxy.stop()
-                                }
-                            
-                            let overlay = OverlayView(viewModel: videoContentViewModel) { hideAfter in
-                                overlayHideTimer?.invalidate()
-                                if hideAfter {
-                                    overlayHideTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
-                                        self.hideOverlay = true
-                                    }
-                                }
-                            }
-                                .padding()
-                                .onAppear {
-                                    overlayHideTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { timer in
-                                        self.hideOverlay = true
-                                    }
-                                }
-                            
-                            if hideOverlay {
-                                overlay.hidden()
-                                // show buffering overlay even if the rest of the overlay is hidden
-                                if videoContentViewModel.playerState == .buffering {
-                                    VStack {
-                                        Spacer()
-                                        ProgressView()
-                                        Spacer()
-                                    }
-                                }
-                            } else {
-                                overlay
-                            }
-                        }
-                        .onTapGesture {
-                            overlayHideTimer?.invalidate()
-                            withAnimation {
-                                hideOverlay.toggle()
-                            }
+                    } else if videoPlayer != nil || vlcPlayerConfiguration != nil {
+                        if videoPlayer != nil {
+                            NativeVideoPlayer(player: videoPlayer!)
+                        } else if vlcPlayerConfiguration != nil {
+                            VlcVideoPlayer(vlcPlayerConfiguration: vlcPlayerConfiguration!)
                         }
                     } else {
                         Text("Cannot display post data")
                     }
                 }
-                
                 HStack {
                     Text("Tags")
                         .frame(alignment: .leading)
@@ -120,17 +83,60 @@ struct PostDetailView: View {
             }
         }
         .onAppear {
-            loadPost()
+            // may be called after coming out of fullscreen
+            if postDetailed == nil {
+                loadPost()
+            }
         }
         .alert("Error", isPresented: $isError, actions: {}, message: {Text(self.errorCode ?? "")})
         .navigationBarTitle("Post", displayMode: .inline)
         .toolbar {
+            if isVideo {
+                ToolbarItemGroup(placement: .navigation) {
+                    Button {
+                        showSettingsPopOver.toggle()
+                    } label: {
+                        Image(systemName: "ellipsis")
+                    }
+                    .sheet(isPresented: $showSettingsPopOver) {
+                        HStack{
+                            Button {
+                                showSettingsPopOver = false
+                            } label: {
+                                Image(systemName: "xmark.circle")
+                                    .foregroundColor(.gray)
+                                    .padding(10)
+                            }
+                            Spacer()
+                        }
+                        List {
+                            if hlsAvailable {
+                                Toggle("HLS", isOn: $hlsEnabled)
+                                    .onChange(of: hlsEnabled) { value in
+                                        nativePlayerEnabled = value
+                                        if postDetailed != nil {
+                                            setVideoPlayer(postDetailed: postDetailed!)
+                                        }
+                                    }
+                            }
+                            Toggle("Use Native Player", isOn: $nativePlayerEnabled)
+                                .onChange(of: nativePlayerEnabled) { value in
+                                    if postDetailed != nil {
+                                        setVideoPlayer(postDetailed: postDetailed!)
+                                    }
+                                }
+                        }
+                        .listStyle(.insetGrouped)
+                    }
+                }
+            }
             ToolbarItemGroup(placement: .bottomBar) {
                 Spacer()
                 if postDetailed != nil && postDetailed!.prev_post_pk != nil {
                     Button {
                         postKey = postDetailed!.prev_post_pk!.int32Value
                         postDetailed = nil
+                        videoPlayer?.pause()
                         loadPost()
                     } label: {
                         Image(systemName: "chevron.backward")
@@ -140,6 +146,7 @@ struct PostDetailView: View {
                     Button {
                         postKey = postDetailed!.next_post_pk!.int32Value
                         postDetailed = nil
+                        videoPlayer?.pause()
                         loadPost()
                     } label: {
                         Image(systemName: "chevron.forward")
@@ -154,6 +161,11 @@ struct PostDetailView: View {
             DispatchQueue.main.async {
                 if let postDetailed = postDetailed {
                     self.postDetailed = postDetailed
+                    self.isVideo = postDetailed.s3_object != nil && postDetailed.s3_object!.mime_type.starts(with: "video")
+                    self.hlsAvailable = postDetailed.s3_object != nil && postDetailed.s3_object!.hls_master_playlist != nil
+                    self.hlsEnabled = self.hlsAvailable
+                    self.nativePlayerEnabled = self.hlsAvailable
+                    setVideoPlayer(postDetailed: postDetailed)
                 }
                 if let error = error {
                     self.isError = true
@@ -172,6 +184,23 @@ struct PostDetailView: View {
                     }
                 }
             }
+        }
+    }
+    
+    func setVideoPlayer(postDetailed: Api.PostDetailed) {
+        let url = self.hlsAvailable && self.hlsEnabled
+        ? URL(string: Api.companion.BASE_URL + "get-object/" + postDetailed.s3_object!.hls_master_playlist!)!
+        : URL(string: Api.companion.BASE_URL + "get-object/" + postDetailed.s3_object!.object_key)!
+        
+        if self.isVideo && self.nativePlayerEnabled {
+            self.videoPlayer = AVPlayer(url: url)
+            self.vlcPlayerConfiguration = nil
+        } else if self.isVideo {
+            self.videoPlayer = nil
+            self.vlcPlayerConfiguration = getVlcConfiguration(url: url)
+        } else {
+            self.videoPlayer = nil
+            self.vlcPlayerConfiguration = nil
         }
     }
     

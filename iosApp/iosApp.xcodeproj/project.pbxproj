@@ -23,6 +23,8 @@
 		425FC7A32971C61C0039BBA0 /* MobileVLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 425FC7A22971C61C0039BBA0 /* MobileVLCKit.xcframework */; };
 		425FC7A42971C61C0039BBA0 /* MobileVLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 425FC7A22971C61C0039BBA0 /* MobileVLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		426273F22970B68600DEB0CE /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 426273F12970B68600DEB0CE /* Kingfisher */; };
+		42938CAE2A0FD980006E1A8A /* NativeVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42938CAD2A0FD980006E1A8A /* NativeVideoPlayer.swift */; };
+		42938CB02A0FDDD1006E1A8A /* VlcVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42938CAF2A0FDDD1006E1A8A /* VlcVideoPlayer.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +56,8 @@
 		425FC79E2971B9FC0039BBA0 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		425FC7A02971BA280039BBA0 /* IntExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtension.swift; sourceTree = "<group>"; };
 		425FC7A22971C61C0039BBA0 /* MobileVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobileVLCKit.xcframework; path = Carthage/Build/MobileVLCKit.xcframework; sourceTree = "<group>"; };
+		42938CAD2A0FD980006E1A8A /* NativeVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeVideoPlayer.swift; sourceTree = "<group>"; };
+		42938CAF2A0FDDD1006E1A8A /* VlcVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VlcVideoPlayer.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* filebroker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = filebroker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -87,6 +91,8 @@
 				425FC79C2971B9C70039BBA0 /* OverlayView.swift */,
 				425FC79E2971B9FC0039BBA0 /* ContentViewModel.swift */,
 				425FC7A02971BA280039BBA0 /* IntExtension.swift */,
+				42938CAD2A0FD980006E1A8A /* NativeVideoPlayer.swift */,
+				42938CAF2A0FDDD1006E1A8A /* VlcVideoPlayer.swift */,
 			);
 			path = VideoPlayer;
 			sourceTree = "<group>";
@@ -236,6 +242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				425B38952942A81200B2D0A1 /* AboutView.swift in Sources */,
+				42938CAE2A0FD980006E1A8A /* NativeVideoPlayer.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				425B388B2931291C00B2D0A1 /* MenuView.swift in Sources */,
 				425B38912940C33900B2D0A1 /* PostsView.swift in Sources */,
@@ -243,6 +250,7 @@
 				425FC7A12971BA280039BBA0 /* IntExtension.swift in Sources */,
 				425B38932942585000B2D0A1 /* PostDetailView.swift in Sources */,
 				425FC79F2971B9FC0039BBA0 /* ContentViewModel.swift in Sources */,
+				42938CB02A0FDDD1006E1A8A /* VlcVideoPlayer.swift in Sources */,
 				425B388F2940AB3B00B2D0A1 /* ProfileView.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 				425FC79D2971B9C70039BBA0 /* OverlayView.swift in Sources */,
