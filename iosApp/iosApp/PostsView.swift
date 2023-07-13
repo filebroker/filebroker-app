@@ -33,7 +33,7 @@ struct PostsView: View {
                 LazyVGrid(columns: gridColumns) {
                     ForEach(posts) { post in
                         GeometryReader { geometry in
-                            NavigationLink(destination: PostDetailView(env: env, postKey: post.pk, query: query, currentPage: currentPage)) {
+                            NavigationLink(destination: PostDetailView(env: env, postKey: post.pk, query: query, currentPage: $currentPage)) {
                                 GridItemView(post: post, width: geometry.size.width)
                             }
                         }

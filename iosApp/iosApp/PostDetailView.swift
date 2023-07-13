@@ -18,7 +18,7 @@ struct PostDetailView: View {
     
     @State var postKey: Int32
     var query: String
-    var currentPage: Int64
+    @Binding var currentPage: Int64
     
     @State var postDetailed: Api.PostDetailed? = nil
     
@@ -132,9 +132,10 @@ struct PostDetailView: View {
             }
             ToolbarItemGroup(placement: .bottomBar) {
                 Spacer()
-                if postDetailed != nil && postDetailed!.prev_post_pk != nil {
+                if postDetailed != nil && postDetailed!.prev_post != nil {
                     Button {
-                        postKey = postDetailed!.prev_post_pk!.int32Value
+                        postKey = postDetailed!.prev_post!.pk
+                        currentPage = postDetailed!.prev_post!.page
                         postDetailed = nil
                         videoPlayer?.pause()
                         loadPost()
@@ -142,9 +143,10 @@ struct PostDetailView: View {
                         Image(systemName: "chevron.backward")
                     }
                 }
-                if postDetailed != nil && postDetailed!.next_post_pk != nil {
+                if postDetailed != nil && postDetailed!.next_post != nil {
                     Button {
-                        postKey = postDetailed!.next_post_pk!.int32Value
+                        postKey = postDetailed!.next_post!.pk
+                        currentPage = postDetailed!.next_post!.page
                         postDetailed = nil
                         videoPlayer?.pause()
                         loadPost()

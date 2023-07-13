@@ -7,7 +7,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.MediaController
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.VideoView
 import androidx.fragment.app.Fragment
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.GlobalScope
@@ -56,11 +62,11 @@ class PostDetailFragment : Fragment() {
                 }
             }
 
-            fun switchToPost(key: Int) {
+            fun switchToPost(post: Api.PostWindowObject) {
                 val bundle = Bundle()
-                bundle.putInt("key", key)
+                bundle.putInt("key", post.pk)
                 bundle.putString("query", query)
-                bundle.putLong("currentPage", currentPage)
+                bundle.putLong("currentPage", post.page)
                 (activity as MainActivity).navHostFragment.navController.navigate(
                     R.id.postDetailFragment,
                     bundle
@@ -68,16 +74,16 @@ class PostDetailFragment : Fragment() {
             }
 
             requireActivity().runOnUiThread {
-                if (post.prev_post_pk != null) {
+                if (post.prev_post != null) {
                     prevPostButton.visibility = View.VISIBLE
                     prevPostButton.setOnClickListener {
-                        switchToPost(post.prev_post_pk!!)
+                        switchToPost(post.prev_post!!)
                     }
                 }
-                if (post.next_post_pk != null) {
+                if (post.next_post != null) {
                     nextPostButton.visibility = View.VISIBLE
                     nextPostButton.setOnClickListener {
-                        switchToPost(post.next_post_pk!!)
+                        switchToPost(post.next_post!!)
                     }
                 }
 

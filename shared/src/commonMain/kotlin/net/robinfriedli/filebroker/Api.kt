@@ -90,14 +90,20 @@ class Api(var loginChangeCallback: ((Login?) -> Unit)? = null) {
         val score: Int,
         val s3_object: S3Object?,
         val thumbnail_url: String?,
-        val prev_post_pk: Int?,
-        val next_post_pk: Int?,
+        val prev_post: PostWindowObject?,
+        val next_post: PostWindowObject?,
         val is_public: Boolean,
         val public_edit: Boolean,
         val description: String?,
         val is_editable: Boolean,
         val tags: List<Tag>,
         val group_access: List<PostGroupAccessDetailed>
+    )
+
+    @Serializable
+    class PostWindowObject(
+        val pk: Int,
+        val page: Long,
     )
 
     @Serializable
