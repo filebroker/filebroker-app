@@ -66,9 +66,9 @@ class Api(var loginChangeCallback: ((Login?) -> Unit)? = null) {
         val source_url: String?,
         val title: String?,
         val creation_timestamp: String,
-        val fk_create_user: Int,
+        val create_user: User,
         val score: Int,
-        val s3_object: String?,
+        val s3_object: S3Object?,
         val thumbnail_url: String?,
         val thumbnail_object_key: String?,
         val is_public: Boolean,
@@ -86,7 +86,7 @@ class Api(var loginChangeCallback: ((Login?) -> Unit)? = null) {
         val source_url: String?,
         val title: String?,
         val creation_timestamp: String,
-        val fk_create_user: Int,
+        val create_user: User,
         val score: Int,
         val s3_object: S3Object?,
         val thumbnail_url: String?,
@@ -96,6 +96,7 @@ class Api(var loginChangeCallback: ((Login?) -> Unit)? = null) {
         val public_edit: Boolean,
         val description: String?,
         val is_editable: Boolean,
+        val is_deletable: Boolean,
         val tags: List<Tag>,
         val group_access: List<PostGroupAccessDetailed>
     )
